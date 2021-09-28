@@ -65,14 +65,16 @@ if [[ "$BUILDKITE_TAG" =~ _GA$ ]]; then
 
     echo "GA release detected: Updating latest tag on ${REGISTRY_HOST} for ${BUILD_TYPE}"
 
+    DOCKER_NAME=$(echo "$DOCKER_NAME" | sed -e 's/_GA//')
+
     docker pull "$MINER_REGISTRY_NAME:$DOCKER_NAME"
     docker tag "$MINER_REGISTRY_NAME:$DOCKER_NAME" "$MINER_REGISTRY_NAME:$LATEST_TAG"
     docker push "$MINER_REGISTRY_NAME:$LATEST_TAG"
 
     if [[ "$BUILD_TYPE" == "miner" ]]; then
         echo "miner GA release detected: Updating 'GA' tag on ${REGISTRY_HOST} for ${VERSION}"
-        docker tag "$MINER_REGISTRY_NAME:$DOCKER_NAME" "$MINER_REGISTRY_NAME:${VERSION}_GA"
-        docker push "$MINER_REGISTRY_NAME:${VERSION}_GA"
+        docker tag "$MINER_REGISTRY_NAME:$DOCKER_NAME" "$MINER_REGISTRY_NAME:${DOCKER_NAME}_GA"
+        docker push "$MINER_REGISTRY_NAME:${DOCKER_NAME}_GA"
     fi
 
     exit $?
